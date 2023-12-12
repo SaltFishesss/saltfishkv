@@ -1,0 +1,9 @@
+[submodule "thirdparty/rocksdb"]
+	path = thirdparty/rocksdb
+	url = https://github.com/facebook/rocksdb.git
+[submodule "thirdparty/brpc"]
+	path = thirdparty/brpc
+	url = https://github.com/apache/brpc.git
+[submodule "thirdparty/braft"]
+	path = thirdparty/braft
+	url = https://github.com/baidu/braft.git
