@@ -19,11 +19,15 @@ cmake_minimum_required(VERSION 3.20.3)
 
 project(SaltFish)
 
+message("Source path: ${CMAKE_SOURCE_DIR}")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules")
 include(CMakeParseArguments)
 
-set(THIRDPARTY_INSTALL_DIR ${THIRDPARTY_DIR}/installed)
+set(THIRDPARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/thirdparty/installed)
 message("Set Third party path: ${THIRDPARTY_INSTALL_DIR}")
+
+include_directories(${CMAKE_SOURCE_DIR}/src)
 
 ############################################################
 # Dependencies
@@ -130,7 +134,97 @@ ADD_THIRDPARTY_LIB(braft
         SHARED_LIB "${BRAFT_SHARED_LIB}")
 
 ############################################################
+# Testing
+############################################################
+
+# Add a new binary that is compiled just like a unit test but is not executed
+# by or registered with "ctest". Useful for writing tests that use the Google
+# Test infrastructure but cannot or should not be run pre-commit.
+function(ADD_SALTFISH_TEST_NO_CTEST REL_TEST_NAME SALTFISH_TEST_LINK_LIBS)
+  get_filename_component(TEST_NAME ${REL_TEST_NAME} NAME_WE)
+  add_executable(${TEST_NAME} "${REL_TEST_NAME}.cc")
+  target_link_libraries(${TEST_NAME} ${SALTFISH_TEST_LINK_LIBS})
+endfunction()
+
+############################################################
+# Visibility
+############################################################
+
+# add_library() wrapper that adds a second variant of the library for use in the
+# exported Kudu C++ client. This variant is suffixed with "_exported" and is
+# compiled with special visibility flags to hide all symbols except those that
+# are part of the public ABI.
+#
+# There are two different kinds of exported libraries: internal and leaf.
+# Internal libraries are static archives while leaf libraries are shared
+# objects built from internal libraries. In practice there is only one leaf
+# library: the Kudu C++ client itself.
+#
+# Arguments:
+#
+# LIB_NAME is the name of the library. It must come first. Required.
+#
+# SRCS is the list of source files to compile into the library. Required.
+#
+# DEPS is the list of targets that both library variants depend on. Required.
+#
+# NONLINK_DEPS is the list of (non-linked) targets that both library variants
+# depend on. Optional.
+#
+# COMPILE_FLAGS is a string containing any additional compilation flags that
+# should be added to both library variants. Optional.
+#
+# EXPORTED_SHARED is a toggle that, if set, indicates that the exported variant
+# is a "leaf" library. Otherwise it is an "internal" library. Optional.
+#
+# EXPORTED_OUTPUT_NAME is a string describing a different file name for the
+# exported library variant. If not set, defaults to LIB_NAME. Optional.
+#
+# EXPORTED_OUTPUT_DIRECTORY is a string describing a different directory where
+# the exported library variant should be written. If not set, defaults to the
+# directory where this function was called. Optional.
+#
+# EXPORTED_DEPS is a list of targets that the exported library variant depends
+# on. If not set, defaults to DEPS. Optional.
+function(ADD_EXPORTABLE_LIBRARY LIB_NAME)
+  # Parse the arguments.
+  set(options EXPORTED_SHARED)
+  set(one_value_args COMPILE_FLAGS EXPORTED_OUTPUT_NAME EXPORTED_OUTPUT_DIRECTORY)
+  set(multi_value_args SRCS DEPS EXPORTED_DEPS NONLINK_DEPS)
+  cmake_parse_arguments(ARG "${options}" "${one_value_args}" "${multi_value_args}" ${ARGN})
+  if(ARG_UNPARSED_ARGUMENTS)
+    message(SEND_ERROR "Error: unrecognized arguments: ${ARG_UNPARSED_ARGUMENTS}")
+  endif()
+
+  # First add the regular version of the library. It uses
+  # whatever linkage was defined globally.
+  add_library(${LIB_NAME} ${ARG_SRCS})
+  if(ARG_COMPILE_FLAGS)
+    set_target_properties(${LIB_NAME}
+      PROPERTIES COMPILE_FLAGS ${ARG_COMPILE_FLAGS})
+  endif()
+  target_link_libraries(${LIB_NAME} ${ARG_DEPS})
+  if(ARG_NONLINK_DEPS)
+    add_dependencies(${LIB_NAME} ${ARG_NONLINK_DEPS})
+  endif()
+
+  # Now start setting up the exported variant.
+  set(EXPORTED_LIB_NAME ${LIB_NAME}_exported)
+  if(ARG_EXPORTED_SHARED)
+    # Leaf library.
+    set(EXPORTED_LINKAGE "SHARED")
+    set(EXPORTED_LINK_PRIVATE "LINK_PRIVATE")
+  else()
+    # Internal library.
+    set(EXPORTED_LINKAGE "STATIC")
+    set(EXPORTED_LINK_PRIVATE)
+  endif()
+  add_library(${EXPORTED_LIB_NAME} ${EXPORTED_LINKAGE} ${ARG_SRCS})
+endfunction()
+
+############################################################
 # Subdirectories
 ############################################################
 
 add_subdirectory(src/saltfish/server)
+add_subdirectory(src/saltfish/gutil)
