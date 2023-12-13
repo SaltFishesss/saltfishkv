@@ -15,20 +15,16 @@
 # specific language governing permissions and limitations
 # under the License.
 
-BasedOnStyle: Google
-ColumnLimit: 100
+find_path(BRPC_INCLUDE_DIR brpc/server.h
+  # make sure we don't accidentally pick up a different version
+  NO_CMAKE_SYSTEM_PATH
+  NO_SYSTEM_ENVIRONMENT_PATH)
+message("Find brpc include path: ${BRPC_INCLUDE_DIR}")
 
-# We use IWYU to sort includes, so we disable clang-format's
-# sorting.
-SortIncludes: false
+find_library(BRPC_STATIC_LIB libbrpc.a
+  NO_CMAKE_SYSTEM_PATH
+  NO_SYSTEM_ENVIRONMENT_PATH)
 
-# Some of the older code uses 'Foo *bar' instead of 'Foo* bar'. But,
-# for new code, we want to switch to the latter formatting regardless
-# of what the rest of the file uses.
-DerivePointerAlignment: false
-
-# We prefer to put arguments and parameters on separate lines when they
-# don't fit on one line, rather than bin-packing them into as few lines
-# as possible.
-BinPackArguments: false
-BinPackParameters: false
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(Brpc REQUIRED_VARS
+  BRPC_STATIC_LIB BRPC_INCLUDE_DIR)

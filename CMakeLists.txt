@@ -116,6 +116,19 @@ ADD_THIRDPARTY_LIB(rocksdb
         STATIC_LIB "${ROCKSDB_STATIC_LIB}"
         SHARED_LIB "${ROCKSDB_SHARED_LIB}")
 
+## brpc
+find_package(Brpc REQUIRED)
+include_directories(SYSTEM ${BRPC_INCLUDE_DIR})
+ADD_THIRDPARTY_LIB(brpc
+        STATIC_LIB "${BRPC_STATIC_LIB}")
+
+## braft
+find_package(Braft REQUIRED)
+include_directories(SYSTEM ${BRPC_INCLUDE_DIR})
+ADD_THIRDPARTY_LIB(braft
+        STATIC_LIB "${BRAFT_STATIC_LIB}"
+        SHARED_LIB "${BRAFT_SHARED_LIB}")
+
 ############################################################
 # Subdirectories
 ############################################################

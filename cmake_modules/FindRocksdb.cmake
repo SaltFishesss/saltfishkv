@@ -19,6 +19,7 @@ find_path(ROCKSDB_INCLUDE_DIR rocksdb/db.h
         # make sure we don't accidentally pick up a different version
         NO_CMAKE_SYSTEM_PATH
         NO_SYSTEM_ENVIRONMENT_PATH)
+message("Find rocksdb include path: ${ROCKSDB_INCLUDE_DIR}")
 
 find_library(ROCKSDB_STATIC_LIB librocksdb.a
         NO_CMAKE_SYSTEM_PATH
