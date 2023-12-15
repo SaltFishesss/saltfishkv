@@ -28,6 +28,7 @@ set(THIRDPARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/thirdparty/installed)
 message("Set Third party path: ${THIRDPARTY_INSTALL_DIR}")
 
 include_directories(${CMAKE_SOURCE_DIR}/src)
+message("Set include paths: ${CMAKE_SOURCE_DIR}/src")
 
 ############################################################
 # Dependencies
@@ -228,3 +229,4 @@ endfunction()
 
 add_subdirectory(src/saltfish/server)
 add_subdirectory(src/saltfish/gutil)
+add_subdirectory(src/saltfish/util)
