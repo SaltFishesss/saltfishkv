@@ -21,14 +21,33 @@ project(SaltFish)
 
 message("Source path: ${CMAKE_SOURCE_DIR}")
 
+# Disallow GCC < 7.0, since it doesn't support the C++17 standard
+# well enough for us. https://en.cppreference.com/w/cpp/compiler_support
+if ("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS "7.0")
+    message("version ${CMAKE_CXX_COMPILER_VERSION}")
+    message(FATAL_ERROR "GCC <7.0 not supported")
+endif()
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+message("CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
+message("CMAKE CXX FLAGS:" ${CMAKE_CXX_FLAGS})
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake_modules")
 include(CMakeParseArguments)
 
 set(THIRDPARTY_INSTALL_DIR ${CMAKE_SOURCE_DIR}/thirdparty/installed)
 message("Set Third party path: ${THIRDPARTY_INSTALL_DIR}")
 
+include_directories(${CMAKE_BINARY_DIR}/src)
 include_directories(${CMAKE_SOURCE_DIR}/src)
+message("Set include paths: ${CMAKE_BINARY_DIR}/src")
 message("Set include paths: ${CMAKE_SOURCE_DIR}/src")
+
+############################################################
+# "make pb-gen": generate all protobuf source/header files
+############################################################
+if (UNIX)
+    add_custom_target(pb-gen)
+endif (UNIX)
 
 ############################################################
 # Dependencies
@@ -134,6 +153,17 @@ ADD_THIRDPARTY_LIB(braft
         STATIC_LIB "${BRAFT_STATIC_LIB}"
         SHARED_LIB "${BRAFT_SHARED_LIB}")
 
+## Protobuf
+find_package(Protobuf REQUIRED)
+include_directories(SYSTEM ${PROTOBUF_INCLUDE_DIR})
+ADD_THIRDPARTY_LIB(protobuf
+        STATIC_LIB "${PROTOBUF_STATIC_LIBRARY}"
+        SHARED_LIB "${PROTOBUF_SHARED_LIBRARY}")
+ADD_THIRDPARTY_LIB(protoc
+        STATIC_LIB "${PROTOBUF_PROTOC_STATIC_LIBRARY}"
+        SHARED_LIB "${PROTOBUF_PROTOC_SHARED_LIBRARY}"
+        DEPS protobuf)
+
 ############################################################
 # Testing
 ############################################################
@@ -230,3 +260,6 @@ endfunction()
 add_subdirectory(src/saltfish/server)
 add_subdirectory(src/saltfish/gutil)
 add_subdirectory(src/saltfish/util)
+add_subdirectory(src/saltfish/service)
+
+

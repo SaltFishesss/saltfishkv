@@ -33,6 +33,5 @@ set(KV_SERVICE_LIBS
     )
 ADD_EXPORTABLE_LIBRARY(kv_service
         SRCS ${KV_SERVICE_SRCS}
-        DEPS ${KV_SERVICE_LIBS}
-        NONLINK_DEPS)
+        DEPS ${KV_SERVICE_LIBS})
 
