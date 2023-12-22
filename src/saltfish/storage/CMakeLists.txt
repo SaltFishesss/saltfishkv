@@ -16,22 +16,17 @@
 # under the License.
 
 #######################################
-# saltfish_util
+# storage
 #######################################
 
-set(UTIL_SRCS
-  slice.cc
-  status.cc
-  malloc.cc
-)
+set(STORAGE_SRCS
+    rocksdb_storage.cc )
 
-set(UTIL_LIBS
-  gflags
-  glog
-)
+set(STORAGE_LIBS
+   saltfish_util
+   )
 
-ADD_EXPORTABLE_LIBRARY(saltfish_util
-  SRCS ${UTIL_SRCS}
-  DEPS ${UTIL_LIBS}
-  NONLINK_DEPS
-  EXPORTED_DEPS ${EXPORTED_UTIL_LIBS})
+ADD_EXPORTABLE_LIBRARY(storage
+        SRCS ${STORAGE_SRCS}
+        DEPS ${STORAGE_LIBS}
+        NONLINK_DEPS)
