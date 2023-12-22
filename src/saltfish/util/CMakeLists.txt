@@ -16,6 +16,14 @@
 # under the License.
 
 #######################################
+# protoc-gen-insertions
+#######################################
+
+add_executable(protoc-gen-insertions protoc_gen_insertions.cc)
+target_link_libraries(protoc-gen-insertions gutil protobuf protoc ${SALTFISH_BASE_LIBS})
+
+
+#######################################
 # saltfish_util
 #######################################
 
@@ -31,7 +39,7 @@ set(UTIL_LIBS
 )
 
 
-ADD_EXPORTABLE_LIBRARY(saltfish_util
+ADD_EXPORTABLE_LIBRARY(util
   SRCS ${UTIL_SRCS}
   DEPS ${UTIL_LIBS}
   NONLINK_DEPS
