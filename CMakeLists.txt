@@ -261,5 +261,7 @@ add_subdirectory(src/saltfish/server)
 add_subdirectory(src/saltfish/gutil)
 add_subdirectory(src/saltfish/util)
 add_subdirectory(src/saltfish/service)
+add_subdirectory(src/saltfish/common)
+add_subdirectory(src/saltfish/engine)
 
 
