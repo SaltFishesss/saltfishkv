@@ -71,15 +71,3 @@ ADD_EXPORTABLE_LIBRARY(gutil
   DEPS ${GUTIL_LIBS}
   # Disable warnings which trigger a lot in the Google code:
   COMPILE_FLAGS "-funsigned-char -Wno-char-subscripts")
-
-#######################################
-# Unit tests
-#######################################
-
-#ADD_KUDU_TEST(strings/string_util-test)
-#ADD_KUDU_TEST(strings/numbers-test)
-#if (NOT APPLE)
-#  # The sysinfo-test consists of scenarios for Linux-specific function
-#  # ParseMaxCpuIndex(): that doesn't exist on macOS.
-#  ADD_KUDU_TEST(sysinfo-test)
-#endif()
