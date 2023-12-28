@@ -14,41 +14,30 @@
 // KIND, either express or implied.  See the License for the
 // specific language governing permissions and limitations
 // under the License.
-
 #pragma once
 
-#include "saltfish/engine/engine.h"
+#include <iostream>
 
-#include <shared_mutex>
+#include "saltfish/util/status.h"
 
 namespace saltfish {
-namespace engine {
-class MemoryEngine : public Engine {
- public:
-  MemoryEngine() = default;
-  ~MemoryEngine() override = default;
-  DISALLOW_COPY_AND_ASSIGN(MemoryEngine);
 
-  Status Init(EngineOptions opt) override { return Status::OK(); };
-  Status Close() override { return Status::OK(); };
-
-  Status Get(const Slice &user_key, std::string *user_value) override;
-  Status Put(const Slice &user_key, Slice &user_value) override;
-  Status Delete(const Slice &user_key) override;
-
-  Status LoadSnapshot(std::shared_ptr<Snapshot> snapshot) override {
-    return Status::OK();
-  }
-
-  Snapshot *NewSnapshot() override { return nullptr; }
-
-  Status Drop() override { return Status::OK(); }
-
- private:
-  mutable std::shared_mutex rw_lock_;
-
-  std::map<std::string, std::string> kv_map_;
+struct ServerOption {
 };
 
-}
+class Server {
+ public:
+  Server(const std::string name, const ServerOption &opt) : name_(name), option_(opt) {}
+  ~Server() = default;
+
+  virtual Status Init() = 0;
+  virtual Status Start() = 0;
+  virtual Status Shutdown() = 0;
+ private:
+  std::string name_;
+  ServerOption option_;
+
+  DISALLOW_COPY_AND_ASSIGN(Server);
+};
+
 }
