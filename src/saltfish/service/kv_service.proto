@@ -30,10 +30,20 @@ message GetResponse {
     optional bytes value = 2;
 };
 
+message Mutate {
+    enum Type {
+        PUT = 0;
+        DEL = 1;
+        NONE = 2;
+    }
+    required Type type = 1;
+    required bytes key = 2;
+    optional bytes value = 3;
+}
+
 message PutRequest {
     required RequestHeader header = 1;
-    required bytes key = 2;
-    required bytes value = 3;
+    required Mutate put = 2;
 };
 
 message PutResponse {
@@ -42,14 +52,14 @@ message PutResponse {
 
 message DeleteRequest {
     required RequestHeader header = 1;
-    required bytes key = 2;
+    required Mutate del = 2;
 };
 
 message DeleteResponse {
     required ResponseHeader header = 1;
 }
 
-service SaltFishKVService {
+service KVService {
     rpc Get(PutRequest) returns (GetResponse);
     rpc Put(PutRequest) returns (PutResponse);
     rpc Delete(PutRequest) returns (DeleteResponse);

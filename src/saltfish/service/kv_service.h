@@ -19,7 +19,7 @@
 
 namespace saltfish {
 namespace service {
-class KVServiceImpl : public proto::SaltFishKVService {
+class KVServiceImpl : public proto::KVService {
  public:
   void Get(::google::protobuf::RpcController *controller,
            const ::saltfish::service::proto::PutRequest *request,
