@@ -20,7 +20,7 @@
 namespace saltfish {
 namespace service {
 void Get(::google::protobuf::RpcController *controller,
-         const ::saltfish::service::proto::PutRequest *request,
+         const ::saltfish::service::proto::GettRequest *request,
          ::saltfish::service::proto::GetResponse *response,
          ::google::protobuf::Closure *done) {
   return;
@@ -34,7 +34,7 @@ void Put(::google::protobuf::RpcController *controller,
 }
 
 void Delete(::google::protobuf::RpcController *controller,
-            const ::saltfish::service::proto::PutRequest *request,
+            const ::saltfish::service::proto::DeleteRequest *request,
             ::saltfish::service::proto::DeleteResponse *response,
             ::google::protobuf::Closure *done) {
   return;
