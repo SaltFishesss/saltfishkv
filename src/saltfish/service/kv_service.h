@@ -22,7 +22,7 @@ namespace service {
 class KVServiceImpl : public proto::KVService {
  public:
   void Get(::google::protobuf::RpcController *controller,
-           const ::saltfish::service::proto::PutRequest *request,
+           const ::saltfish::service::proto::GettRequest *request,
            ::saltfish::service::proto::GetResponse *response,
            ::google::protobuf::Closure *done) override;
   void Put(::google::protobuf::RpcController *controller,
@@ -30,7 +30,7 @@ class KVServiceImpl : public proto::KVService {
            ::saltfish::service::proto::PutResponse *response,
            ::google::protobuf::Closure *done) override;
   void Delete(::google::protobuf::RpcController *controller,
-              const ::saltfish::service::proto::PutRequest *request,
+              const ::saltfish::service::proto::DeleteRequest *request,
               ::saltfish::service::proto::DeleteResponse *response,
               ::google::protobuf::Closure *done) override;
 

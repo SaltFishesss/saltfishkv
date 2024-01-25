@@ -60,7 +60,7 @@ message DeleteResponse {
 }
 
 service KVService {
-    rpc Get(PutRequest) returns (GetResponse);
+    rpc Get(GettRequest) returns (GetResponse);
     rpc Put(PutRequest) returns (PutResponse);
-    rpc Delete(PutRequest) returns (DeleteResponse);
+    rpc Delete(DeleteRequest) returns (DeleteResponse);
 };
